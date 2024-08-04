@@ -21,13 +21,48 @@
             margin-top: 10vh;
         }
 
+        #sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/diagonal-stripes.png'); 
+            background-color: #87CEEB;
+        }
+
+        .cloud {
+            position: absolute;
+            width: 100px;
+            height: 60px;
+            background-color: #FFFFFF; 
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        #cloud1 {
+            top: 20px;
+            left: 50px;
+        }
+
+        #cloud2 {
+            top: 50px;
+            right: 150px;
+        }
+
+        #cloud3 {
+            top: 100px;
+            left: 300px;
+        }
+
         #player {
             position: absolute;
             bottom: 50px;
             left: 50px;
             width: 40px;
             height: 40px;
-            background-color: #FF6347; 
+            background-image: url('Images/Kangaroo.png');
+            background-size: cover;
             border-radius: 50%;
         }
 
@@ -37,7 +72,8 @@
             right: 0;
             width: 30px;
             height: 30px;
-            background-color: #8B4513;
+            background-image: url('Images/Bush.png');
+            background-size: cover;
         }
 
         #ground {
@@ -65,20 +101,25 @@
             transform: translate(-50%, -50%);
             padding: 10px 20px;
             font-size: 20px;
-            background-color: #FF6347; 
-            color: #FFFFFF; 
+            background-color: #FF6347;
+            color: #FFFFFF;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
         #restart-btn:hover {
-            background-color: #FF4500; 
+            background-color: #FF4500;
         }
     </style>
 </head>
 <body>
     <div id="game-container">
+        <div id="sky">
+            <div id="cloud1" class="cloud"></div>
+            <div id="cloud2" class="cloud"></div>
+            <div id="cloud3" class="cloud"></div>
+        </div>
         <div id="score">Score: 0</div>
         <div id="player"></div>
         <div id="obstacle"></div>
@@ -124,8 +165,6 @@
                 }
 
                 obstacle.style.left = `${obstaclePosition}px`;
-
-                
                 if (obstaclePosition < 90 && obstaclePosition > 50 && !isJumping) {
                     gameOver();
                     return;
@@ -138,7 +177,7 @@
         }
 
         function gameOver() {
-            restartBtn.style.display = 'block'; 
+            restartBtn.style.display = 'block';
             document.removeEventListener('keydown', handleKeydown);
         }
 
@@ -146,7 +185,7 @@
             score = 0;
             updateScore();
             obstaclePosition = window.innerWidth;
-            restartBtn.style.display = 'none'; 
+            restartBtn.style.display = 'none';
             document.addEventListener('keydown', handleKeydown);
             moveObstacle();
         }
