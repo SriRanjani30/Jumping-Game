@@ -9,15 +9,16 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #87CEEB;
+            background-color: #1E90FF;
         }
 
         #game-container {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            height: 80vh;
             overflow: hidden;
             background-color: #2E8B57;
+            margin-top: 10vh;
         }
 
         #player {
@@ -26,7 +27,7 @@
             left: 50px;
             width: 40px;
             height: 40px;
-            background-color: #FF6347;
+            background-color: #FF6347; 
             border-radius: 50%;
         }
 
@@ -46,27 +47,60 @@
             height: 50px;
             background-color: #3B3B3B;
         }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: #FFFFFF; 
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+
+        #restart-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #FF6347; 
+            color: #FFFFFF; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #restart-btn:hover {
+            background-color: #FF4500; 
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
+        <div id="score">Score: 0</div>
         <div id="player"></div>
         <div id="obstacle"></div>
         <div id="ground"></div>
+        <button id="restart-btn">Restart</button>
     </div>
     <script>
         const player = document.getElementById('player');
         const obstacle = document.getElementById('obstacle');
+        const scoreDisplay = document.getElementById('score');
+        const restartBtn = document.getElementById('restart-btn');
 
+        let score = 0;
         let isJumping = false;
+        let obstaclePosition = window.innerWidth;
 
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space' && !isJumping) {
-                jump();
-            }
-        });
+        function updateScore() {
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
 
         function jump() {
+            if (isJumping) return;
             isJumping = true;
             player.style.transition = 'transform 0.5s';
             player.style.transform = 'translateY(-150px)';
@@ -80,20 +114,21 @@
         }
 
         function moveObstacle() {
-            let obstaclePosition = window.innerWidth;
-
             function update() {
                 obstaclePosition -= 5;
 
-                if (obstaclePosition < -30) {
+                if (obstaclePosition < -30) { 
                     obstaclePosition = window.innerWidth;
+                    score++;
+                    updateScore();
                 }
 
                 obstacle.style.left = `${obstaclePosition}px`;
 
+                
                 if (obstaclePosition < 90 && obstaclePosition > 50 && !isJumping) {
-                    alert('Game Over!');
-                    obstaclePosition = window.innerWidth;
+                    gameOver();
+                    return;
                 }
 
                 requestAnimationFrame(update);
@@ -101,6 +136,29 @@
 
             update();
         }
+
+        function gameOver() {
+            restartBtn.style.display = 'block'; 
+            document.removeEventListener('keydown', handleKeydown);
+        }
+
+        function restartGame() {
+            score = 0;
+            updateScore();
+            obstaclePosition = window.innerWidth;
+            restartBtn.style.display = 'none'; 
+            document.addEventListener('keydown', handleKeydown);
+            moveObstacle();
+        }
+
+        function handleKeydown(event) {
+            if (event.code === 'Space') {
+                jump();
+            }
+        }
+
+        document.addEventListener('keydown', handleKeydown);
+        restartBtn.addEventListener('click', restartGame);
 
         moveObstacle();
     </script>
