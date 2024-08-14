@@ -11,71 +11,63 @@
             overflow: hidden;
             background-color: #1E90FF;
         }
-
         #game-container {
             position: relative;
             width: 100vw;
-            height: 80vh;
+            height: 100vh;
             overflow: hidden;
-            background-color: #2E8B57;
-            margin-top: 10vh;
+            background-color: #87CEEB;
         }
-
         #sky {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://www.transparenttextures.com/patterns/diagonal-stripes.png'); 
             background-color: #87CEEB;
         }
-
         .cloud {
             position: absolute;
-            width: 100px;
-            height: 60px;
-            background-color: #FFFFFF; 
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            width: 150px;
+            height: 90px;
+            background-size: cover;
+            background-position: center;
         }
-
         #cloud1 {
-            top: 20px;
-            left: 50px;
-        }
-
-        #cloud2 {
             top: 50px;
-            right: 150px;
+            left: 50px;
+            background-image: url('Images/Cloud.png');
         }
-
-        #cloud3 {
+        #cloud2 {
             top: 100px;
+            right: 150px;
+            background-image: url('Images/Cloud.png');
+        }
+        #cloud3 {
+            top: 150px;
             left: 300px;
+            background-image: url('Images/Cloud.png');
         }
 
         #player {
             position: absolute;
             bottom: 50px;
             left: 50px;
-            width: 40px;
-            height: 40px;
+            width: 120px;
+            height: 120px;
             background-image: url('Images/Kangaroo.png');
             background-size: cover;
             border-radius: 50%;
         }
-
         #obstacle {
             position: absolute;
             bottom: 50px;
             right: 0;
-            width: 30px;
-            height: 30px;
+            width: 100px;
+            height: 70px;
             background-image: url('Images/Bush.png');
             background-size: cover;
         }
-
         #ground {
             position: absolute;
             bottom: 0;
@@ -83,16 +75,19 @@
             height: 50px;
             background-color: #3B3B3B;
         }
-
         #score {
             position: absolute;
             top: 10px;
             left: 20px;
-            color: #FFFFFF; 
-            font-size: 24px;
-            font-family: Arial, sans-serif;
+            color: #000000;
+            font-size: 36px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
         }
-
         #restart-btn {
             display: none;
             position: absolute;
@@ -107,7 +102,6 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
         #restart-btn:hover {
             background-color: #FF4500;
         }
@@ -131,21 +125,19 @@
         const obstacle = document.getElementById('obstacle');
         const scoreDisplay = document.getElementById('score');
         const restartBtn = document.getElementById('restart-btn');
-
         let score = 0;
         let isJumping = false;
         let obstaclePosition = window.innerWidth;
-
+        let obstacleSpeed = 5;
+        let obstacleCount = 1;
         function updateScore() {
             scoreDisplay.textContent = `Score: ${score}`;
         }
-
         function jump() {
             if (isJumping) return;
             isJumping = true;
             player.style.transition = 'transform 0.5s';
             player.style.transform = 'translateY(-150px)';
-
             setTimeout(() => {
                 player.style.transform = 'translateY(0)';
                 setTimeout(() => {
@@ -153,24 +145,25 @@
                 }, 500);
             }, 500);
         }
-
         function moveObstacle() {
             function update() {
-                obstaclePosition -= 5;
-
-                if (obstaclePosition < -30) { 
+                obstaclePosition -= obstacleSpeed;
+                if (obstaclePosition < -100) {
                     obstaclePosition = window.innerWidth;
                     score++;
                     updateScore();
+                    if (score % 5 === 0) {
+                        obstacleSpeed += 1;
+                        obstacleCount = Math.min(obstacleCount + 1, 5);
+                    }
                 }
-
                 obstacle.style.left = `${obstaclePosition}px`;
-                if (obstaclePosition < 90 && obstaclePosition > 50 && !isJumping) {
+
+                if (obstaclePosition < 170 && obstaclePosition > 90 && !isJumping) {
                     gameOver();
                     return;
                 }
-
-                requestAnimationFrame(update);
+               requestAnimationFrame(update);
             }
 
             update();
@@ -178,27 +171,25 @@
 
         function gameOver() {
             restartBtn.style.display = 'block';
-            document.removeEventListener('keydown', handleKeydown);
+             document.removeEventListener('keydown', handleKeydown);
         }
-
         function restartGame() {
             score = 0;
             updateScore();
             obstaclePosition = window.innerWidth;
+            obstacleSpeed = 5;
+            obstacleCount = 1;
             restartBtn.style.display = 'none';
-            document.addEventListener('keydown', handleKeydown);
+                  document.addEventListener('keydown', handleKeydown);
             moveObstacle();
         }
-
         function handleKeydown(event) {
             if (event.code === 'Space') {
                 jump();
             }
         }
-
         document.addEventListener('keydown', handleKeydown);
         restartBtn.addEventListener('click', restartGame);
-
         moveObstacle();
     </script>
 </body>
